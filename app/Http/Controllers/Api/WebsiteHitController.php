@@ -41,7 +41,8 @@ class WebsiteHitController extends Controller
     }
     
     public function handleUrlHit(Request $request) {
-        
+
+        return $request->all();
 
         // Find the website based on the domain
         $website = Website::where('domain', $request->website)->firstOrFail();

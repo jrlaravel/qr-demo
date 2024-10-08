@@ -18,7 +18,7 @@ class WebsiteHitController extends Controller
             document.addEventListener('DOMContentLoaded', function() {
                 var currentUrl = window.location.pathname;
                 if (currentUrl === '{$website->path}') {
-                    fetch('https://bisque-loris-715536.hostingersite.com//api/hit-url', {
+                    fetch('https:/bisque-loris-715536.hostingersite.com/api/hit-url', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ url: window.location.href, website: '{$website->domain}' })

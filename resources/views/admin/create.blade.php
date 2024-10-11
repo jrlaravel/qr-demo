@@ -3,28 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
+    <title>Add New Content</title>
 </head>
 <body>
-    <h1>{{ isset($website) ? 'Edit Website' : 'Add New Website' }}</h1>
+    <div style="text-align: center; padding: 50px;">
+        <h1>Add New Content</h1>
 
-    <form action="{{ isset($website) ? route('admin.websites.update', $website->id) : route('admin.websites.store') }}" method="POST">
-        @csrf
-        @if(isset($website))
-            @method('PUT')
+        @if ($errors->any())
+            <div>
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li style="color: red;">{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
         @endif
 
-        <label>Domain:</label>
-        <input type="text" name="domain" value="{{ isset($website) ? $website->domain : old('domain') }}" required>
+        <form action="{{ route('admin.store') }}" method="POST">
+            @csrf
+            <div>
+                <label for="slug">Slug:</label>
+                <input type="text" name="slug" id="slug" required>
+            </div>
+            <div>
+                <label for="title">Title:</label>
+                <input type="text" name="title" id="title" required>
+            </div>
+            <div>
+                <label for="body">Body:</label>
+                <textarea name="body" id="body" required></textarea>
+            </div>
+            <div>
+                <label for="website">Website:</label>
+                <input type="text" name="website" id="website" required placeholder="https://example.com">
+            </div>
+            <button type="submit">Add Content</button>
+        </form>
+        
+    </div>
 
-        <label>Path:</label>
-        <input type="text" name="path" value="{{ isset($website) ? $website->path : old('path') }}" required>
+    <h2>Existing Slugs</h2>
 
-        <label>Content:</label>
-        <textarea name="content" required>{{ isset($website) ? $website->content : old('content') }}</textarea>
+    <ul>
+        @foreach ($contents as $content)
+            <li>{{ $content->slug }}</li>
+        @endforeach
+    </ul>
 
-        <button type="submit">{{ isset($website) ? 'Update Website' : 'Add Website' }}</button>
-    </form>
 </body>
 </html>

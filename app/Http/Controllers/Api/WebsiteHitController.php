@@ -8,44 +8,42 @@ use Illuminate\Http\Request;
 
 class WebsiteHitController extends Controller
 {
-    public function generateScript($id) {
-        $website = Website::findOrFail($id);  // Find the website by ID
+    public function generateScript($id)
+    {
+        $website = Website::find($id);
     
-        // Generate a dynamic JavaScript snippet
-        $script = <<<EOT
+        $script = "
         <script>
-        (function() {
-            document.addEventListener('DOMContentLoaded', function() {
-                var currentUrl = window.location.pathname;
-                if (currentUrl === '{$website->path}') {
-                    fetch('/api/hit-url', { // Consider using a relative path or a config variable
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ url: window.location.href, website: '{$website->domain}' })
-                    })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Network response was not ok');
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        var container = document.getElementById('dynamic-content');
-                        if (container) {
-                            container.innerHTML = data.content;
-                        }
-                    })
-                    .catch(err => console.error('Error fetching content:', err));
-                }
-            });
-        })();
+            (function() {
+                document.addEventListener('DOMContentLoaded', function() {
+                    var currentUrl = window.location.pathname;
+                    if (currentUrl === '{$website->path}') {
+                        // Hit the API on your Laravel app
+                        fetch('http://127.0.0.1:8000/api/hit-url', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ domain: '{$website->domain}', path: '{$website->path}' })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.content) {
+                                var container = document.getElementById('dynamic-content');
+                                if (container) {
+                                    container.innerHTML = data.content;
+                                }
+                            }
+                        })
+                        .catch(err => console.error('Error fetching content:', err));
+                    }
+                });
+            })();
         </script>
-        EOT;
+        ";
     
-        return response($script)->header('Content-Type', 'application/javascript');
+        return response($script, 200)->header('Content-Type', 'text/javascript');
     }
     
-    public function handleUrlHit(Request $request) {
+    public function hitUrl(Request $request) {
         // Validate request
         $request->validate([
             'url' => 'required|url',

@@ -1,18 +1,17 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\ContentController;
 
 Route::get('/', function () {
     return view('welcome');
 });
 
-Route::prefix('admin')->group(function() {
-    Route::get('websites', [App\Http\Controllers\Admin\WebsiteController::class, 'index'])->name('admin.websites.index');
-    Route::get('websites/create', [App\Http\Controllers\Admin\WebsiteController::class, 'create'])->name('admin.websites.create');
-    Route::post('websites', [App\Http\Controllers\Admin\WebsiteController::class, 'store'])->name('admin.websites.store');
-    Route::get('websites/{id}/edit', [App\Http\Controllers\Admin\WebsiteController::class, 'edit'])->name('admin.websites.edit');
-    Route::put('websites/{id}', [App\Http\Controllers\Admin\WebsiteController::class, 'update'])->name('admin.websites.update');
-    Route::delete('websites/{id}', [App\Http\Controllers\Admin\WebsiteController::class, 'destroy'])->name('admin.websites.destroy');
+// Route to show the form
+Route::get('/content/create', [ContentController::class, 'create'])->name('admin.create');
 
-});
+// Route to handle the form submission
+Route::post('/content', [ContentController::class, 'store'])->name('admin.store');
 
+// Existing dynamic content route
+Route::get('/dynamic-content/{website}/{slug}', [ContentController::class, 'show']);
